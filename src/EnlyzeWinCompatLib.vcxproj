@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CRT.cpp" />
     <ClCompile Include="static_init.c" />
     <ClCompile Include="winnt_40.cpp" />
     <ClCompile Include="winnt_50.cpp" />
@@ -79,6 +80,7 @@
       <AdditionalOptions>-march=pentium-mmx</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)libcxx\src\winpthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -102,6 +104,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)libcxx\src\winpthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>

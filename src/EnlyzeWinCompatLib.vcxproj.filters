@@ -21,6 +21,9 @@
     <ClCompile Include="static_init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CRT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
