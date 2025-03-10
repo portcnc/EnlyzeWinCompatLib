@@ -40,5 +40,8 @@
     <MASM Include="winnt_40_forwarders.asm">
       <Filter>Source Files</Filter>
     </MASM>
+    <MASM Include="other.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

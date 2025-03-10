@@ -34,9 +34,8 @@ LibDecodePointer(PVOID Ptr)
     {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnDecodePointer = reinterpret_cast<PFN_DECODEPOINTER>(GetProcAddress(hKernel32, "DecodePointer"));
-        if (!pfnDecodePointer)
-        {
+        pfnDecodePointer = CastFuncPtr<PFN_DECODEPOINTER>(GetProcAddress(hKernel32, "DecodePointer"));
+        if (!pfnDecodePointer) {
             pfnDecodePointer = _CompatDecodePointer;
         }
     }
@@ -45,13 +44,11 @@ LibDecodePointer(PVOID Ptr)
 }
 
 extern "C" PVOID WINAPI
-LibEncodePointer(PVOID Ptr)
-{
-    if (!pfnEncodePointer)
-    {
+LibEncodePointer(PVOID Ptr) {
+    if (!pfnEncodePointer) {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnEncodePointer = reinterpret_cast<PFN_ENCODEPOINTER>(GetProcAddress(hKernel32, "EncodePointer"));
+        pfnEncodePointer = CastFuncPtr<PFN_ENCODEPOINTER>(GetProcAddress(hKernel32, "EncodePointer"));
         if (!pfnEncodePointer)
         {
             pfnEncodePointer = _CompatEncodePointer;

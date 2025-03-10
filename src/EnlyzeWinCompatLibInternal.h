@@ -9,3 +9,12 @@
 #include "targetver.h"
 #include <Windows.h>
 #include <intrin.h>
+
+template<typename FuncPtrToT, typename FuncPtrFromT>
+FuncPtrToT CastFuncPtr(FuncPtrFromT ptr) {
+	FuncPtrToT result{};
+
+	memcpy(&result, &ptr, min(sizeof(result), sizeof(ptr)));
+
+	return result;
+}

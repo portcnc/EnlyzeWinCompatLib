@@ -179,7 +179,7 @@ LibGetModuleHandleExW(DWORD dwFlags, LPCWSTR lpModuleName, HMODULE * phModule)
     {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnGetModuleHandleExW = reinterpret_cast<PFN_GETMODULEHANDLEEXW>(GetProcAddress(hKernel32, "GetModuleHandleExW"));
+        pfnGetModuleHandleExW = CastFuncPtr<PFN_GETMODULEHANDLEEXW>(GetProcAddress(hKernel32, "GetModuleHandleExW"));
         if (!pfnGetModuleHandleExW)
         {
             pfnGetModuleHandleExW = _CompatGetModuleHandleExW;
@@ -196,7 +196,7 @@ LibHeapQueryInformation(HANDLE HeapHandle, HEAP_INFORMATION_CLASS HeapInformatio
     {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnHeapQueryInformation = reinterpret_cast<PFN_HEAPQUERYINFORMATION>(GetProcAddress(hKernel32, "HeapQueryInformation"));
+        pfnHeapQueryInformation = CastFuncPtr<PFN_HEAPQUERYINFORMATION>(GetProcAddress(hKernel32, "HeapQueryInformation"));
         if (!pfnHeapQueryInformation)
         {
             pfnHeapQueryInformation = _CompatHeapQueryInformation;
@@ -213,9 +213,8 @@ LibInitializeSListHead(PCOMPAT_SLIST_HEADER ListHead)
     {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnInitializeSListHead = reinterpret_cast<PFN_INITIALIZESLISTHEAD>(GetProcAddress(hKernel32, "InitializeSListHead"));
-        if (!pfnInitializeSListHead)
-        {
+        pfnInitializeSListHead = CastFuncPtr<PFN_INITIALIZESLISTHEAD>(GetProcAddress(hKernel32, "InitializeSListHead"));
+        if (!pfnInitializeSListHead) {
             pfnInitializeSListHead = _CompatInitializeSListHead;
         }
     }
@@ -224,15 +223,12 @@ LibInitializeSListHead(PCOMPAT_SLIST_HEADER ListHead)
 }
 
 extern "C" PCOMPAT_SLIST_ENTRY WINAPI
-LibInterlockedFlushSList(PCOMPAT_SLIST_HEADER ListHead)
-{
-    if (!pfnInterlockedFlushSList)
-    {
+LibInterlockedFlushSList(PCOMPAT_SLIST_HEADER ListHead) {
+    if (!pfnInterlockedFlushSList) {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnInterlockedFlushSList = reinterpret_cast<PFN_INTERLOCKEDFLUSHSLIST>(GetProcAddress(hKernel32, "InterlockedFlushSList"));
-        if (!pfnInterlockedFlushSList)
-        {
+        pfnInterlockedFlushSList = CastFuncPtr<PFN_INTERLOCKEDFLUSHSLIST>(GetProcAddress(hKernel32, "InterlockedFlushSList"));
+        if (!pfnInterlockedFlushSList) {
             pfnInterlockedFlushSList = _CompatInterlockedFlushSList;
         }
     }
@@ -241,13 +237,11 @@ LibInterlockedFlushSList(PCOMPAT_SLIST_HEADER ListHead)
 }
 
 extern "C" PCOMPAT_SLIST_ENTRY WINAPI
-LibInterlockedPushEntrySList(PCOMPAT_SLIST_HEADER ListHead, PCOMPAT_SLIST_ENTRY ListEntry)
-{
-    if (!pfnInterlockedPushEntrySList)
-    {
+LibInterlockedPushEntrySList(PCOMPAT_SLIST_HEADER ListHead, PCOMPAT_SLIST_ENTRY ListEntry) {
+    if (!pfnInterlockedPushEntrySList) {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnInterlockedPushEntrySList = reinterpret_cast<PFN_INTERLOCKEDPUSHENTRYSLIST>(GetProcAddress(hKernel32, "InterlockedPushEntrySList"));
+        pfnInterlockedPushEntrySList = CastFuncPtr<PFN_INTERLOCKEDPUSHENTRYSLIST>(GetProcAddress(hKernel32, "InterlockedPushEntrySList"));
         if (!pfnInterlockedPushEntrySList)
         {
             pfnInterlockedPushEntrySList = _CompatInterlockedPushEntrySList;

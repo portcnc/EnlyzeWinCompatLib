@@ -64,7 +64,7 @@ LibGetFileSizeEx(HANDLE hFile, PLARGE_INTEGER lpFileSize)
     {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnGetFileSizeEx = reinterpret_cast<PFN_GETFILESIZEEX>(GetProcAddress(hKernel32, "GetFileSizeEx"));
+        pfnGetFileSizeEx = CastFuncPtr<PFN_GETFILESIZEEX>(GetProcAddress(hKernel32, "GetFileSizeEx"));
         if (!pfnGetFileSizeEx)
         {
             pfnGetFileSizeEx = _CompatGetFileSizeEx;
@@ -81,7 +81,7 @@ LibInitializeCriticalSectionAndSpinCount(LPCRITICAL_SECTION lpCriticalSection, D
     {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnInitializeCriticalSectionAndSpinCount = reinterpret_cast<PFN_INITIALIZECRITICALSECTIONANDSPINCOUNT>(GetProcAddress(hKernel32, "InitializeCriticalSectionAndSpinCount"));
+        pfnInitializeCriticalSectionAndSpinCount = CastFuncPtr<PFN_INITIALIZECRITICALSECTIONANDSPINCOUNT>(GetProcAddress(hKernel32, "InitializeCriticalSectionAndSpinCount"));
         if (!pfnInitializeCriticalSectionAndSpinCount)
         {
             pfnInitializeCriticalSectionAndSpinCount = _CompatInitializeCriticalSectionAndSpinCount;
@@ -98,7 +98,7 @@ LibSetFilePointerEx(HANDLE hFile, LARGE_INTEGER liDistanceToMove, PLARGE_INTEGER
     {
         // Check if the API is provided by kernel32, otherwise fall back to our implementation.
         HMODULE hKernel32 = GetModuleHandleW(L"kernel32");
-        pfnSetFilePointerEx = reinterpret_cast<PFN_SETFILEPOINTEREX>(GetProcAddress(hKernel32, "SetFilePointerEx"));
+        pfnSetFilePointerEx = CastFuncPtr<PFN_SETFILEPOINTEREX>(GetProcAddress(hKernel32, "SetFilePointerEx"));
         if (!pfnSetFilePointerEx)
         {
             pfnSetFilePointerEx = _CompatSetFilePointerEx;

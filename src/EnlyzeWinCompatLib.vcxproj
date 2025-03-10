@@ -21,6 +21,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <MASM Include="other.asm" />
     <MASM Include="winnt_40_forwarders.asm" />
     <MASM Include="winnt_50_forwarders.asm" />
     <MASM Include="winnt_51_forwarders.asm" />
@@ -72,12 +73,12 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>-march=pentium-mmx</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)libcxx\src\winpthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -99,6 +100,8 @@
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalOptions>-flto -march=pentium-mmx</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)libcxx\src\winpthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>
