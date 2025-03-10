@@ -640,6 +640,7 @@ extern "C" {
 	) {
 		const auto Out = [stream](char c) {
 			(void)stream;
+			(void)c;
 			// fputc(c, stream);
 		};
 
