@@ -639,6 +639,7 @@ extern "C" {
 		va_list argList
 	) {
 		const auto Out = [stream](char c) {
+			(void)stream;
 			// fputc(c, stream);
 		};
 
