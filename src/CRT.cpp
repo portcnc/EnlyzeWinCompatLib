@@ -316,18 +316,193 @@ extern "C" {
 
 // Non standard
 template<typename I, typename C>
-char *cpp_itoa(I value, C *buffer, int radix) {
+char *cpp_itoa(I value, C *buffer, int radix, bool upper = false) {
 	const auto save = buffer;
-	const char alpha[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+	const char *alpha = upper ? "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" : "0123456789abcdefghijklmnopqrstuvwxyz";
+	char result[std::numeric_limits<I>::digits10 + 1 + std::is_signed<I>::value]{};
+	char *end = result + sizeof(result);
+	char *ptr = end;
 
-	// TODO: implement
-	(void)value;
-	(void)radix;
-	(void)alpha;
+	if (value < 0) {
+		do {
+			const auto digit = -(value % radix);
+			value /= radix;
+			*(--ptr) = alpha[digit];
+		} while (value);
 
-	save[0] = '\0';
+		*(--ptr) = '-';
+	} else {
+		do {
+			const auto digit = value % radix;
+			value /= radix;
+			*(--ptr) = alpha[digit];
+		} while (value);
+	}
+
+	for (auto size = end - ptr; size--; ) {
+		*buffer++ = *ptr++;
+	}
+	*buffer = '\0';
 
 	return save;
+}
+
+template<typename Char, typename Out>
+int cpp_sprintf(Out out, const Char *fmt, va_list arglist) {
+	int nChars{};
+
+	while (*fmt) {
+		auto c = *fmt++;
+
+		if (c == '%') {
+			if (*fmt == '%') {
+				out(c);
+				++nChars;
+				++fmt;
+				continue;
+			}
+
+			bool leftJustified = false;
+			enum class PositiveFill {
+				None,
+				Space,
+				Plus
+			} positiveFill = PositiveFill::None;
+			bool alternate = false;
+			char fillChar [[maybe_unused]] = ' ';
+
+			switch (*fmt) {
+				case '-': leftJustified = true; ++fmt; break;
+				case '+': positiveFill = PositiveFill::Plus; ++fmt;  break;
+				case ' ': if (positiveFill != PositiveFill::Plus) positiveFill = PositiveFill::Space; ++fmt; break;
+				case '#': alternate = true; ++fmt; break;
+				case '0': fillChar = '0'; ++fmt; break;
+				default: break;
+			}
+
+			if (leftJustified)
+				fillChar = ' ';
+
+			enum class Length {
+				hh,
+				h,
+				None,
+				l,
+				ll,
+				j,
+				z,
+				t,
+				L,
+			} length = Length::None;
+
+			switch (*fmt) {
+				case 'h': 
+					length = Length::h;
+					if (*++fmt == 'h') {
+						length = Length::hh;
+						++fmt;
+					}
+					break;
+				case 'l': 
+					length = Length::l;
+					if (*++fmt == 'l') {
+						length = Length::ll;
+						++fmt;
+					}
+					break;
+				case 'j': length = Length::j; ++fmt; break;
+				case 'z': length = Length::z; ++fmt; break;
+				case 't': length = Length::t; ++fmt; break;
+				case 'L': length = Length::L; ++fmt; break;
+				default: break;
+			}
+
+			int radix = 0;
+			bool uppercase = false;
+			bool isSigned = false;
+
+			switch (*fmt) {
+				case 'd': [[fallthrough]];
+				case 'i': radix = 10; isSigned = true; break;
+				case 'u': radix = 10; break;
+				case 'o': radix = 8; break;
+				case 'x': radix = 16; break;
+				case 'X': radix = 16; uppercase = true; break;
+				default: return -nChars;
+			}
+
+			if (radix) {
+				if (isSigned) {
+					char result[std::numeric_limits<unsigned long long>::digits10 + 2]{};
+
+					switch (length) {
+						case Length::hh: cpp_itoa(static_cast<unsigned char>(va_arg(arglist, int)), result, radix, uppercase); break;
+						case Length::h: cpp_itoa(static_cast<unsigned short>(va_arg(arglist, int)), result, radix, uppercase); break;
+						case Length::None: cpp_itoa(va_arg(arglist, unsigned int), result, radix, uppercase); break;
+						case Length::l: cpp_itoa(va_arg(arglist, unsigned long), result, radix, uppercase); break;
+						case Length::ll: cpp_itoa(va_arg(arglist, unsigned long long), result, radix, uppercase); break;
+						case Length::j: cpp_itoa(va_arg(arglist, uintmax_t), result, radix, uppercase); break;
+						case Length::z: cpp_itoa(va_arg(arglist, size_t), result, radix, uppercase); break;
+						case Length::t: cpp_itoa(va_arg(arglist, std::make_unsigned_t<ptrdiff_t>), result, radix, uppercase); break;
+						default: break;
+					}
+
+					if (*result != '-') {
+						switch (positiveFill) {
+							case PositiveFill::Space: out(' '); ++nChars; break;
+							case PositiveFill::Plus: out('+'); ++nChars; break;
+							default: break;
+						}
+					}
+
+					for (auto p = result; *p; ++p) {
+						out(*p);
+						++nChars;
+					}
+				} else {
+					char result[std::numeric_limits<signed long long>::digits10 + 3]{};
+
+					switch (length) {
+						case Length::hh: cpp_itoa(static_cast<signed char>(va_arg(arglist, int)), result, radix, uppercase); break;
+						case Length::h: cpp_itoa(static_cast<signed short>(va_arg(arglist, int)), result, radix, uppercase); break;
+						case Length::None: cpp_itoa(va_arg(arglist, signed int), result, radix, uppercase); break;
+						case Length::l: cpp_itoa(va_arg(arglist, signed long), result, radix, uppercase); break;
+						case Length::ll: cpp_itoa(va_arg(arglist, signed long long), result, radix, uppercase); break;
+						case Length::j: cpp_itoa(va_arg(arglist, intmax_t), result, radix, uppercase); break;
+						case Length::z: cpp_itoa(va_arg(arglist, std::make_signed_t<size_t>), result, radix, uppercase); break;
+						case Length::t: cpp_itoa(va_arg(arglist, ptrdiff_t), result, radix, uppercase); break;
+						default: break;
+					}
+
+					switch (positiveFill) {
+						case PositiveFill::Space: out(' '); ++nChars; break;
+						case PositiveFill::Plus: out('+'); ++nChars; break;
+						default: break;
+					}
+
+					if (alternate) {
+						switch (radix) {
+							case 16: out('0'); out(uppercase ? 'X' : 'x'); nChars += 2; break;
+							case 8: out('0'); ++nChars; break;
+							default: break;
+						}
+					}
+
+					for (auto p = result; *p; ++p) {
+						out(*p);
+						++nChars;
+					}
+				}
+			}
+
+			++fmt;
+		} else {
+			out(c);
+			++nChars;
+		}
+	}
+
+	return nChars;
 }
 
 extern "C" {
@@ -443,14 +618,17 @@ extern "C" {
 		_locale_t const locale,
 		va_list const arglist
 	) {
+		size_t size = 0;
+		const auto Out = [buffer, buffer_count, &size](char c) {
+			if (size < buffer_count) {
+				buffer[size++] = c;
+			}
+		};
+
 		(void)options;
-		(void)buffer;
-		(void)buffer_count;
-		(void)format;
 		(void)locale;
-		(void)arglist;
-		// TODO
-		return 0;
+
+		return cpp_sprintf(Out, format, arglist);
 	}
 
 	int CDECL __stdio_common_vfprintf(
@@ -460,13 +638,14 @@ extern "C" {
 		_locale_t locale,
 		va_list argList
 	) {
+		const auto Out = [stream](char c) {
+			// fputc(c, stream);
+		};
+
 		(void)options;
-		(void)stream;
-		(void)format;
 		(void)locale;
-		(void)argList;
-		// TODO
-		return 0;
+
+		return cpp_sprintf(Out, format, argList);
 	}
 
 	int CDECL __stdio_common_vsprintf(
@@ -477,14 +656,17 @@ extern "C" {
 		_locale_t locale,
 		va_list argList
 	) {
+		size_t size = 0;
+		const auto Out = [buffer, bufferCount, &size](char c) {
+			if (size < bufferCount) {
+				buffer[size++] = c;
+			}
+		};
+
 		(void)options;
-		(void)buffer;
-		(void)bufferCount;
-		(void)format;
 		(void)locale;
-		(void)argList;
-		// TODO
-		return 0;
+
+		return cpp_sprintf(Out, format, argList);
 	}
 
 	uintptr_t CDECL _beginthreadex(void *security, unsigned stack_size, unsigned (WINAPI *start_address)(void *), void *arglist, unsigned initflag, unsigned *thrdaddr) {
