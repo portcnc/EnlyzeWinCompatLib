@@ -559,6 +559,11 @@ extern "C" {
 		abort();
 	}
 
+	int CDECL _setjmp(jmp_buf) {
+		// TODO
+		return 0;
+	}
+
 	int CDECL _setjmp3(jmp_buf *env, int count, ...) {
 		(void)env;
 		(void)count;
@@ -694,6 +699,7 @@ extern "C" {
 		::ExitThread(retval);
 	}
 
+	__attribute((force_align_arg_pointer))
 	int wWinMainCRTStartup() {
 		_errno_val = 0;
 		_sys_nerr_val = 0;
@@ -707,10 +713,18 @@ void *operator new(size_t n) {
 	return malloc(n);
 }
 
+void *operator new(size_t n, std::align_val_t) {
+	return malloc(n);
+}
+
 void operator delete(void *p) noexcept {
 	free(p);
 }
 
 void operator delete(void *p, size_t) noexcept {
+	free(p);
+}
+
+void operator delete(void *p, size_t, std::align_val_t) noexcept {
 	free(p);
 }
