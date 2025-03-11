@@ -10,7 +10,7 @@ extern "C" {
 	const void *CDECL memchr(const void *dest, int ch, size_t count) {
 		const char *c = static_cast<const char *>(dest);
 
-		while (count-- > 0) {
+		for (; count-- > 0; ++c) {
 			if (*c == static_cast<unsigned char>(ch)) {
 				return const_cast<char *>(c);
 			}
@@ -253,6 +253,8 @@ I cpp_strtoi(const C *s, C **end, int base) {
 		} else {
 			break;
 		}
+
+		++s;
 	}
 
 	if (end) {
