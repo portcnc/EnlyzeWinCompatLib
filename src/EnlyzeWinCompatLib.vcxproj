@@ -75,7 +75,6 @@
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>-flto -march=pentium-mmx -fno-builtin</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)libcxx\src\winpthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -99,7 +98,6 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalOptions>-flto -march=pentium-mmx -fno-builtin</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)libcxx\src\winpthreads\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
