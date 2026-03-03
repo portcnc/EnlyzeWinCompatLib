@@ -708,6 +708,21 @@ extern "C" {
 
 		return wWinMain(GetModuleHandle(NULL), NULL, ::GetCommandLineW(), SW_SHOW);
 	}
+
+	int __cdecl __std_type_info_compare(const __std_type_info_data *lhs, const __std_type_info_data *rhs) {
+		return reinterpret_cast<intptr_t>(lhs) - reinterpret_cast<intptr_t>(rhs);
+	}
+
+	size_t __cdecl __std_type_info_hash(const __std_type_info_data *data) {
+		return reinterpret_cast<size_t>(data);
+	}
+
+	const char *__cdecl __std_type_info_name(
+		__std_type_info_data *data,
+		[[maybe_unused]] __type_info_node *rootNode
+	) {
+		return data->_UndecoratedName;
+	}
 }
 
 // C++
